@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       zip_path:
-        description: 'Path to zip file'
+        description: 'zamafrica-earthmovers-site.zip'
         required: true
 permissions:
   contents: write
