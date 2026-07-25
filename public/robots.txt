@@ -1,2 +1,7 @@
 User-agent: *
+
 Allow: /
+
+Sitemap: https://zamafrica.netlify.app/sitemap.xml
+
+Host: zamafrica.netlify.app
