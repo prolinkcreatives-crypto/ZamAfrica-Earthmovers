@@ -1,39 +1,15 @@
-name: Unzip
-on:
-  workflow_dispatch:
-    inputs:
-      zip_path:
-        description: 'Path to zip file'
-        required: true
-
-permissions:
-  contents: write
-
-jobs:
-  unzip:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Extract and Commit
+      - name: Extract and Clean Up
         run: |
-          # Verify file exists
-          if [ ! -f "${{ github.event.inputs.zip_path }}" ]; then
-            echo "Error: File ${{ github.event.inputs.zip_path }} not found!"
-            exit 1
-          fi
+          # 1. Unzip while ignoring .git folders and hidden workspace metadata
+          unzip -o "${{ github.event.inputs.zip_path }}" -x "*.git*" "*.workspace*" || [ $? -eq 50 ]
 
-          # Unzip file
-          unzip -o "${{ github.event.inputs.zip_path }}"
+          # 2. Optionally remove the zip file so you don't commit it back into the repo
+          rm "${{ github.event.inputs.zip_path }}"
 
-          # Configure Git
+          # 3. Commit and push extracted files
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          # Stage and commit
           git add .
           git commit -m "Unzip ${{ github.event.inputs.zip_path }}" || echo "Nothing to commit"
-
-          # Push specifying current branch explicitly
           git push origin HEAD:${{ github.ref_name }}
           
